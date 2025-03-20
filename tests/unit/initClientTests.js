@@ -29,9 +29,6 @@ window.config = {
 global.auth0 = auth0;
 global.window = window;
 global.document = window.document;
-global.navigator = {
-  userAgent: 'node.js'
-};
 global.self = { navigator: global.navigator };
 
 copyProps(window, global);
