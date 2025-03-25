@@ -70,7 +70,7 @@ upload_assets() {
   )
 
   for asset in "${assets[@]}"; do
-    local asset_local_path="dist/client/$asset"
+    local asset_local_path="dist/$asset"
     local asset_s3_path="$S3_PATH/assets/$asset"
     local web_path="$CDN_PATH/assets/$asset"
 
