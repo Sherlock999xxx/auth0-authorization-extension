@@ -13,3 +13,4 @@ server/config.json
 scripts/script-settings.json
 coverage
 build/bundle.js
+dist/stats.json
