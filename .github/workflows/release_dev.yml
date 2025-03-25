@@ -2,6 +2,11 @@ name: Release Develop
 on:
   push:
     branches: test
+
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   call-cdn-upload:
     uses: ./.github/workflows/cdn-upload.yml
