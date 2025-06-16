@@ -16,6 +16,8 @@ export default (server) => ({
   handler: async (req, h) => {
     const clients = await multipartRequest(req.pre.auth0, 'clients', { is_global: false, fields: 'client_id,name,callbacks,app_type' });
 
+    console.log('Retrieved clients:', clients);
+
     const applications = _.chain(clients)
         .filter(client => client.app_type === 'spa' || client.app_type === 'native' || client.app_type === 'regular_web')
         .sortBy((client) => client.name.toLowerCase())
