@@ -65,7 +65,7 @@
     "@hapi/hapi": "21.3.3",
     "@hapi/inert": "7.1.0",
     "async": "2.6.4",
-    "auth0": "3.5.0",
+    "auth0": "4.0.0",
     "auth0-extension-tools": "1.5.2",
     "auth0-extension-ui": "1.1.7",
     "auth0-extension-ui-redux": "git+https://github.com/auth0-extensions/auth0-extension-ui-redux",
@@ -82,7 +82,7 @@
     "moment": "^2.29.4",
     "nconf": "^0.12.0",
     "node-uuid": "^1.4.8",
-    "superagent": "^8.0.9",
+    "superagent": "^10.2.2",
     "winston": "^3.10.0"
   },
   "devDependencies": {
