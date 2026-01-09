@@ -1,5 +1,4 @@
 const uuid = require('node-uuid');
-const promiseRetry = require('promise-retry');
 
 const seriesQueue = require('./seriesQueue');
 const ArgumentError = require('../../errors').ArgumentError;
@@ -12,6 +11,33 @@ const getDataForCollection = function(storageContext, collectionName) {
       data[collectionName] = data[collectionName] || [];
       return data;
     });
+};
+
+// Simple promise retry implementation
+const promiseRetry = function(fn, options) {
+  let attempt = 0;
+  const maxRetries = options.retries || 10;
+  const factor = options.factor || 2;
+  const minTimeout = options.minTimeout || 100;
+  const maxTimeout = options.maxTimeout || Infinity;
+
+  const retry = function(err) {
+    attempt++;
+    if (attempt > maxRetries) {
+      return Promise.reject(err);
+    }
+
+    // Calculate timeout with exponential backoff
+    const timeout = Math.min(minTimeout * Math.pow(factor, attempt - 1), maxTimeout);
+
+    return new Promise(function(resolve) {
+      setTimeout(resolve, timeout);
+    }).then(function() {
+      return fn(retry);
+    });
+  };
+
+  return fn(retry);
 };
 
 const withRetry = function(storageContext, action) {
