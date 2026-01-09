@@ -1,6 +1,7 @@
 import _ from 'lodash';
 import { ArgumentError, ValidationError } from '../errors/index.js';
 import config from '../config';
+import logger from '../logger';
 
 const checkUnique = (
   items = [],
@@ -31,24 +32,24 @@ export default class Database {
   }
 
   getStatus() {
-    console.log('[Database] getStatus() called');
-    console.log('[Database] STORAGE_TYPE:', config('STORAGE_TYPE'));
+    logger.info('[Database] getStatus() called');
+    logger.info('[Database] STORAGE_TYPE:', config('STORAGE_TYPE'));
 
     if (!config('STORAGE_TYPE') || config('STORAGE_TYPE') === 'webtask') {
-      console.log('[Database] Reading from storageContext...');
+      logger.info('[Database] Reading from storageContext...');
       return this.provider.storageContext.read().then((data) => {
-        console.log('[Database] Read completed, calculating size');
+        logger.info('[Database] Read completed, calculating size');
         return {
           size: Buffer.byteLength(JSON.stringify(data), 'utf8'),
           type: 'default'
         };
       }).catch((err) => {
-        console.log('[Database] Read failed:', err.message || err);
+        logger.info('[Database] Read failed:', err.message || err);
         throw err;
       });
     }
 
-    console.log('[Database] Non-webtask storage, returning null size');
+    logger.info('[Database] Non-webtask storage, returning null size');
     return Promise.resolve({ size: null, type: config('STORAGE_TYPE') });
   }
 

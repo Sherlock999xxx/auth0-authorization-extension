@@ -4,25 +4,26 @@ const seriesQueue = require('./seriesQueue');
 const ArgumentError = require('../../errors').ArgumentError;
 const NotFoundError = require('../../errors').NotFoundError;
 const ValidationError = require('../../errors').ValidationError;
+const logger = require('../../logger');
 
 const getDataForCollection = function(storageContext, collectionName) {
-  console.log('[getDataForCollection] Reading data for collection:', collectionName);
+  logger.info('[getDataForCollection] Reading data for collection:', collectionName);
   return storageContext.read()
     .then(function(data) {
-      console.log('[getDataForCollection] Data read successfully, keys:', Object.keys(data || {}));
+      logger.info('[getDataForCollection] Data read successfully, keys:', Object.keys(data || {}));
       data[collectionName] = data[collectionName] || [];
-      console.log('[getDataForCollection] Collection', collectionName, 'has', data[collectionName].length, 'items');
+      logger.info('[getDataForCollection] Collection', collectionName, 'has', data[collectionName].length, 'items');
       return data;
     })
     .catch(function(err) {
-      console.log('[getDataForCollection] Error reading data:', err.message || err);
+      logger.info('[getDataForCollection] Error reading data:', err.message || err);
       throw err;
     });
 };
 
 // Simple promise retry implementation
 const promiseRetry = function(fn, options) {
-  console.log('[promiseRetry] Starting with options:', JSON.stringify(options));
+  logger.info('[promiseRetry] Starting with options:', JSON.stringify(options));
   let attempt = 0;
   const maxRetries = options.retries || 10;
   const factor = options.factor || 2;
@@ -31,26 +32,26 @@ const promiseRetry = function(fn, options) {
 
   const retry = function(err) {
     attempt++;
-    console.log('[promiseRetry] Retry attempt', attempt, 'of', maxRetries);
-    console.log('[promiseRetry] Retry error:', err.message || err);
+    logger.info('[promiseRetry] Retry attempt', attempt, 'of', maxRetries);
+    logger.info('[promiseRetry] Retry error:', err.message || err);
     if (attempt > maxRetries) {
-      console.log('[promiseRetry] Max retries exceeded, rejecting');
+      logger.info('[promiseRetry] Max retries exceeded, rejecting');
       return Promise.reject(err);
     }
 
     // Calculate timeout with exponential backoff
     const timeout = Math.min(minTimeout * Math.pow(factor, attempt - 1), maxTimeout);
-    console.log('[promiseRetry] Waiting', timeout, 'ms before retry');
+    logger.info('[promiseRetry] Waiting', timeout, 'ms before retry');
 
     return new Promise(function(resolve) {
       setTimeout(resolve, timeout);
     }).then(function() {
-      console.log('[promiseRetry] Retrying function after timeout');
+      logger.info('[promiseRetry] Retrying function after timeout');
       return fn(retry);
     });
   };
 
-  console.log('[promiseRetry] Executing function (attempt 0)');
+  logger.info('[promiseRetry] Executing function (attempt 0)');
   return fn(retry);
 };
 
@@ -64,27 +65,27 @@ const withRetry = function(storageContext, action) {
   };
 
   return function() {
-    console.log('[withRetry] Starting action with retry wrapper');
+    logger.info('[withRetry] Starting action with retry wrapper');
     return promiseRetry(function(retry) {
-      console.log('[withRetry] Executing action');
+      logger.info('[withRetry] Executing action');
       return action()
         .then(function(result) {
-          console.log('[withRetry] Action succeeded');
+          logger.info('[withRetry] Action succeeded');
           return result;
         })
         .catch(function(err) {
-          console.log('[withRetry] Action failed:', err.message || err);
+          logger.info('[withRetry] Action failed:', err.message || err);
           const writeRetryCondition =
             storageContext.writeRetryCondition ||
             function() { return false; };
           const shouldRetry = writeRetryCondition(err);
-          console.log('[withRetry] Should retry:', shouldRetry);
+          logger.info('[withRetry] Should retry:', shouldRetry);
           if (shouldRetry) {
-            console.log('[withRetry] Retrying due to write conflict');
+            logger.info('[withRetry] Retrying due to write conflict');
             return retry(err);
           }
 
-          console.log('[withRetry] Not retrying, throwing error');
+          logger.info('[withRetry] Not retrying, throwing error');
           throw err;
         });
     }, retryOptions);

@@ -24,20 +24,20 @@ function createProvider(storageContext) {
     case 'webtask':
     default: {
       logger.info('Initializing the Webtask Storage Context.');
-      console.log('[providers] storageContext provided:', !!storageContext);
-      console.log('[providers] storageContext type:', typeof storageContext);
+      logger.info('[providers] storageContext provided:', !!storageContext);
+      logger.info('[providers] storageContext type:', typeof storageContext);
 
       if (storageContext) {
-        console.log('[providers] storageContext.get type:', typeof storageContext.get);
-        console.log('[providers] storageContext.set type:', typeof storageContext.set);
-        console.log('[providers] storageContext keys:', Object.keys(storageContext));
+        logger.info('[providers] storageContext.get type:', typeof storageContext.get);
+        logger.info('[providers] storageContext.set type:', typeof storageContext.set);
+        logger.info('[providers] storageContext keys:', Object.keys(storageContext));
       }
 
       const context = storageContext
           ? new WebtaskStorageContext(storageContext, { force: 0 })
           : new FileStorageContext(path.join(__dirname, '../../data.json'), { mergeWrites: true });
 
-      console.log('[providers] Created context type:', context.constructor.name);
+      logger.info('[providers] Created context type:', context.constructor.name);
       return new BlobRecordProvider(context, { concurrentWrites: false });
     }
   }
