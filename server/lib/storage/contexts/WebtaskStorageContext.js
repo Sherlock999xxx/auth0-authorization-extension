@@ -26,14 +26,29 @@ function WebtaskStorageContext(storage, options) {
  */
 WebtaskStorageContext.prototype.read = function() {
   const ctx = this;
+  console.log('[WebtaskStorageContext] read() called');
+  console.log('[WebtaskStorageContext] storage object type:', typeof ctx.storage);
+  console.log('[WebtaskStorageContext] storage.get type:', typeof ctx.storage.get);
+  console.log('[WebtaskStorageContext] options:', JSON.stringify(ctx.options));
+
   return new Promise(function readWebtaskStorageContext(resolve, reject) {
+    console.log('[WebtaskStorageContext] Calling storage.get()...');
+
     ctx.storage.get(function(err, data) {
+      console.log('[WebtaskStorageContext] storage.get() callback invoked');
+      console.log('[WebtaskStorageContext] err:', err);
+      console.log('[WebtaskStorageContext] data:', data ? 'present' : 'null/undefined');
+
       if (err) {
+        console.log('[WebtaskStorageContext] Rejecting with error:', err.message || err);
         return reject(err);
       }
 
+      console.log('[WebtaskStorageContext] Resolving with data');
       return resolve(data || ctx.defaultData);
     });
+
+    console.log('[WebtaskStorageContext] storage.get() called, waiting for callback...');
   });
 };
 
@@ -44,14 +59,27 @@ WebtaskStorageContext.prototype.read = function() {
  */
 WebtaskStorageContext.prototype.write = function(data) {
   const ctx = this;
+  console.log('[WebtaskStorageContext] write() called');
+  console.log('[WebtaskStorageContext] data keys:', data ? Object.keys(data) : 'null/undefined');
+  console.log('[WebtaskStorageContext] options:', JSON.stringify(ctx.options));
+
   return new Promise(function(resolve, reject) {
+    console.log('[WebtaskStorageContext] Calling storage.set()...');
+
     ctx.storage.set(data, ctx.options, function(err) {
+      console.log('[WebtaskStorageContext] storage.set() callback invoked');
+      console.log('[WebtaskStorageContext] err:', err);
+
       if (err) {
+        console.log('[WebtaskStorageContext] Rejecting with error:', err.message || err, 'code:', err.code);
         return reject(err);
       }
 
+      console.log('[WebtaskStorageContext] Resolving write');
       return resolve();
     });
+
+    console.log('[WebtaskStorageContext] storage.set() called, waiting for callback...');
   });
 };
 

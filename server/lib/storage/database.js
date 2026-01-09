@@ -31,13 +31,24 @@ export default class Database {
   }
 
   getStatus() {
+    console.log('[Database] getStatus() called');
+    console.log('[Database] STORAGE_TYPE:', config('STORAGE_TYPE'));
+
     if (!config('STORAGE_TYPE') || config('STORAGE_TYPE') === 'webtask') {
-      return this.provider.storageContext.read().then((data) => ({
-        size: Buffer.byteLength(JSON.stringify(data), 'utf8'),
-        type: 'default'
-      }));
+      console.log('[Database] Reading from storageContext...');
+      return this.provider.storageContext.read().then((data) => {
+        console.log('[Database] Read completed, calculating size');
+        return {
+          size: Buffer.byteLength(JSON.stringify(data), 'utf8'),
+          type: 'default'
+        };
+      }).catch((err) => {
+        console.log('[Database] Read failed:', err.message || err);
+        throw err;
+      });
     }
 
+    console.log('[Database] Non-webtask storage, returning null size');
     return Promise.resolve({ size: null, type: config('STORAGE_TYPE') });
   }
 
