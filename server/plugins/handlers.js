@@ -1,42 +1,43 @@
-import * as tools from 'auth0-extension-tools';
+import { ArgumentError, HookTokenError } from '../lib/errors/index.js';
 import Boom from '@hapi/boom';
 
 import config from '../lib/config';
 import logger from '../lib/logger';
 import mgmtCLient from './local-mgmt-client';
+import validateHookTokenFn from '../lib/auth0/validateHookToken';
 
 const validateHookToken = (domain, webtaskUrl, extensionSecret) => {
   if (domain === null || domain === undefined) {
-    throw new tools.ArgumentError('Must provide the domain');
+    throw new ArgumentError('Must provide the domain');
   }
 
   if (typeof domain !== 'string' || domain.length === 0) {
-    throw new tools.ArgumentError(`The provided domain is invalid: ${domain}`);
+    throw new ArgumentError(`The provided domain is invalid: ${domain}`);
   }
 
   if (webtaskUrl === null || webtaskUrl === undefined) {
-    throw new tools.ArgumentError('Must provide the webtaskUrl');
+    throw new ArgumentError('Must provide the webtaskUrl');
   }
 
   if (typeof webtaskUrl !== 'string' || webtaskUrl.length === 0) {
-    throw new tools.ArgumentError(`The provided webtaskUrl is invalid: ${webtaskUrl}`);
+    throw new ArgumentError(`The provided webtaskUrl is invalid: ${webtaskUrl}`);
   }
 
   if (extensionSecret === null || extensionSecret === undefined) {
-    throw new tools.ArgumentError('Must provide the extensionSecret');
+    throw new ArgumentError('Must provide the extensionSecret');
   }
 
   if (typeof extensionSecret !== 'string' || extensionSecret.length === 0) {
-    throw new tools.ArgumentError(`The provided extensionSecret is invalid: ${extensionSecret}`);
+    throw new ArgumentError(`The provided extensionSecret is invalid: ${extensionSecret}`);
   }
 
   return hookPath => {
     if (hookPath === null || hookPath === undefined) {
-      throw new tools.ArgumentError('Must provide the hookPath');
+      throw new ArgumentError('Must provide the hookPath');
     }
 
     if (typeof hookPath !== 'string' || hookPath.length === 0) {
-      throw new tools.ArgumentError(`The provided hookPath is invalid: ${hookPath}`);
+      throw new ArgumentError(`The provided hookPath is invalid: ${hookPath}`);
     }
 
     return {
@@ -46,7 +47,7 @@ const validateHookToken = (domain, webtaskUrl, extensionSecret) => {
 
           try {
             logger.info(`Validating hook token with signature: ${extensionSecret.substring(0, 4)}...`);
-            if (tools.validateHookToken(domain, webtaskUrl, hookPath, extensionSecret, token)) {
+            if (validateHookTokenFn(domain, webtaskUrl, hookPath, extensionSecret, token)) {
               return h.continue;
             }
           } catch (e) {
@@ -55,7 +56,7 @@ const validateHookToken = (domain, webtaskUrl, extensionSecret) => {
           }
         }
 
-        const err = new tools.HookTokenError(`Hook token missing for the call to: ${hookPath}`);
+        const err = new HookTokenError(`Hook token missing for the call to: ${hookPath}`);
         throw Boom.unauthorized(err, 401, err.message);
       }
     };

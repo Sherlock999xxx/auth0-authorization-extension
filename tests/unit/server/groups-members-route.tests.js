@@ -81,7 +81,8 @@ describe('groups-members-route', async () => {
       expect(response.result.users).to.be.a('array');
       expect(response.result.users[0].user_id).to.be.equal(uid);
       expect(response.result.users[1].user_id).to.be.equal('undefined');
-      expect(response.result.users[1].name).to.be.equal('<Error: APIError>');
+      // auth0 SDK v4 throws FetchError instead of APIError when user not found
+      expect(response.result.users[1].name).to.be.equal('<Error: FetchError>');
       expect(response.result.total).to.be.equal(2);
     });
 

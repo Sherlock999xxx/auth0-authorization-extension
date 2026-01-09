@@ -1,4 +1,4 @@
-import { ArgumentError } from 'auth0-extension-tools';
+import { ArgumentError } from './errors/index.js';
 
 import { promiseMap } from '../lib/utils';
 
@@ -30,15 +30,21 @@ export default async function(
       Object.assign({}, options, { include_totals: true, page: 0 })
     ]);
 
-    total = response.total || 0;
+    // auth0 SDK v4 returns JSONApiResponse with .data property
+    const responseData = response.data || response;
+    total = responseData.total || 0;
     pageCount = Math.ceil(total / perPage);
-    const data = response[entity] || response || [];
+    const data = responseData[entity] || responseData || [];
     data.forEach((item) => result.push(item));
     return null;
   };
 
   const getPage = async (page) => {
-    const data = await apiCall(client[entity], getter, [ Object.assign({}, options, { page: page }) ]);
+    const response = await apiCall(client[entity], getter, [
+      Object.assign({}, options, { page: page })
+    ]);
+    // auth0 SDK v4 returns JSONApiResponse with .data property
+    const data = response.data || response || [];
     data.forEach((item) => result.push(item));
     return null;
   };

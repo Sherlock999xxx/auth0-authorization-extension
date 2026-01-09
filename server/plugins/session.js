@@ -6,7 +6,8 @@ const Boom = require('@hapi/boom');
 const path = require('path');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const tools = require('auth0-extension-tools');
+const { ArgumentError } = require('../lib/errors');
+const SessionManager = require('../lib/auth0/SessionManager');
 const jwksRsa = require('jwks-rsa');
 
 const { getBasePath, getBaseUrl } = require('../lib/tools/auth0-extension-hapi-tools-url-helpers');
@@ -27,66 +28,66 @@ const findCookie = function(cookie, value) {
 
 const register = async function(server, options) {
   if (!options || typeof options !== 'object') {
-    return new tools.ArgumentError('Must provide the options');
+    return new ArgumentError('Must provide the options');
   }
 
   if (options.onLoginSuccess === null || options.onLoginSuccess === undefined) {
-    return new tools.ArgumentError('Must provide a valid login callback');
+    return new ArgumentError('Must provide a valid login callback');
   }
 
   if (options.secret === null || options.secret === undefined) {
-    return new tools.ArgumentError('Must provide a valid secret');
+    return new ArgumentError('Must provide a valid secret');
   }
 
   if (typeof options.secret !== 'string' || options.secret.length === 0) {
-    return new tools.ArgumentError('The provided secret is invalid: ' + options.secret);
+    return new ArgumentError('The provided secret is invalid: ' + options.secret);
   }
 
   if (options.audience === null || options.audience === undefined) {
-    return new tools.ArgumentError('Must provide a valid audience');
+    return new ArgumentError('Must provide a valid audience');
   }
 
   if (typeof options.audience !== 'string' || options.audience.length === 0) {
-    return new tools.ArgumentError('The provided audience is invalid: ' + options.audience);
+    return new ArgumentError('The provided audience is invalid: ' + options.audience);
   }
 
   if (options.rta === null || options.rta === undefined) {
-    return new tools.ArgumentError('Must provide a valid rta');
+    return new ArgumentError('Must provide a valid rta');
   }
 
   if (typeof options.rta !== 'string' || options.rta.length === 0) {
-    return new tools.ArgumentError('The provided rta is invalid: ' + options.rta);
+    return new ArgumentError('The provided rta is invalid: ' + options.rta);
   }
 
   if (options.domain === null || options.domain === undefined) {
-    return new tools.ArgumentError('Must provide a valid domain');
+    return new ArgumentError('Must provide a valid domain');
   }
 
   if (typeof options.domain !== 'string' || options.domain.length === 0) {
-    return new tools.ArgumentError('The provided domain is invalid: ' + options.domain);
+    return new ArgumentError('The provided domain is invalid: ' + options.domain);
   }
 
   if (options.baseUrl === null || options.baseUrl === undefined) {
-    return new tools.ArgumentError('Must provide a valid base URL');
+    return new ArgumentError('Must provide a valid base URL');
   }
 
   if (typeof options.baseUrl !== 'string' || options.baseUrl.length === 0) {
-    return new tools.ArgumentError('The provided base URL is invalid: ' + options.baseUrl);
+    return new ArgumentError('The provided base URL is invalid: ' + options.baseUrl);
   }
 
   if (options.clientName === null || options.clientName === undefined) {
-    return new tools.ArgumentError('Must provide a valid client name');
+    return new ArgumentError('Must provide a valid client name');
   }
 
   if (typeof options.clientName !== 'string' || options.clientName.length === 0) {
-    return new tools.ArgumentError('The provided client name is invalid: ' + options.clientName);
+    return new ArgumentError('The provided client name is invalid: ' + options.clientName);
   }
 
   const stateKey = options.stateKey || 'state';
   const nonceKey = options.nonceKey || 'nonce';
   const urlPrefix = options.urlPrefix || '';
   const sessionStorageKey = options.sessionStorageKey || 'apiToken';
-  const sessionManager = options.sessionManager || new tools.SessionManager(options.rta, options.domain, options.baseUrl);
+  const sessionManager = options.sessionManager || new SessionManager(options.rta, options.domain, options.baseUrl);
   const basicCookieAttr = {
     isHttpOnly: true
   };
