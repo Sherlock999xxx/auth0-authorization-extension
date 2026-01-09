@@ -73,18 +73,24 @@ export default async () => {
     if (statusCode >= 400) {
       request.response.output.statusCode = statusCode;
 
-      // Map status codes to standard HTTP error names
+      // Preserve domain/business error names (ValidationError, NotFoundError, ArgumentError)
+      // but map infrastructure error names (ManagementApiError, etc.) to standard HTTP error names
       let errorName = request.response.name;
-      if (statusCode === 400) {
-        errorName = "Bad Request";
-      } else if (statusCode === 401) {
-        errorName = "Unauthorized";
-      } else if (statusCode === 403) {
-        errorName = "Forbidden";
-      } else if (statusCode === 404) {
-        errorName = "Not Found";
-      } else if (statusCode === 429) {
-        errorName = "Too Many Requests";
+      const domainErrors = ['ValidationError', 'NotFoundError', 'ArgumentError'];
+      const shouldPreserveName = errorName && domainErrors.includes(errorName);
+
+      if (!shouldPreserveName) {
+        if (statusCode === 400) {
+          errorName = "Bad Request";
+        } else if (statusCode === 401) {
+          errorName = "Unauthorized";
+        } else if (statusCode === 403) {
+          errorName = "Forbidden";
+        } else if (statusCode === 404) {
+          errorName = "Not Found";
+        } else if (statusCode === 429) {
+          errorName = "Too Many Requests";
+        }
       }
 
       request.response.output.payload = {

@@ -1,5 +1,4 @@
 const ArgumentError = require('../../errors').ArgumentError;
-const logger = require('../../logger');
 
 /**
  * Create a new WebtaskStorageContext.
@@ -27,29 +26,13 @@ function WebtaskStorageContext(storage, options) {
  */
 WebtaskStorageContext.prototype.read = function() {
   const ctx = this;
-  logger.info('[WebtaskStorageContext] read() called');
-  logger.info('[WebtaskStorageContext] storage object type:', typeof ctx.storage);
-  logger.info('[WebtaskStorageContext] storage.get type:', typeof ctx.storage.get);
-  logger.info('[WebtaskStorageContext] options:', JSON.stringify(ctx.options));
-
   return new Promise(function readWebtaskStorageContext(resolve, reject) {
-    logger.info('[WebtaskStorageContext] Calling storage.get()...');
-
     ctx.storage.get(function(err, data) {
-      logger.info('[WebtaskStorageContext] storage.get() callback invoked');
-      logger.info('[WebtaskStorageContext] err:', err);
-      logger.info('[WebtaskStorageContext] data:', data ? 'present' : 'null/undefined');
-
       if (err) {
-        logger.info('[WebtaskStorageContext] Rejecting with error:', err.message || err);
         return reject(err);
       }
-
-      logger.info('[WebtaskStorageContext] Resolving with data');
       return resolve(data || ctx.defaultData);
     });
-
-    logger.info('[WebtaskStorageContext] storage.get() called, waiting for callback...');
   });
 };
 
@@ -60,27 +43,13 @@ WebtaskStorageContext.prototype.read = function() {
  */
 WebtaskStorageContext.prototype.write = function(data) {
   const ctx = this;
-  logger.info('[WebtaskStorageContext] write() called');
-  logger.info('[WebtaskStorageContext] data keys:', data ? Object.keys(data) : 'null/undefined');
-  logger.info('[WebtaskStorageContext] options:', JSON.stringify(ctx.options));
-
   return new Promise(function(resolve, reject) {
-    logger.info('[WebtaskStorageContext] Calling storage.set()...');
-
     ctx.storage.set(data, ctx.options, function(err) {
-      logger.info('[WebtaskStorageContext] storage.set() callback invoked');
-      logger.info('[WebtaskStorageContext] err:', err);
-
       if (err) {
-        logger.info('[WebtaskStorageContext] Rejecting with error:', err.message || err, 'code:', err.code);
         return reject(err);
       }
-
-      logger.info('[WebtaskStorageContext] Resolving write');
       return resolve();
     });
-
-    logger.info('[WebtaskStorageContext] storage.set() called, waiting for callback...');
   });
 };
 

@@ -35,18 +35,9 @@ export default (cfg, storageContext, cb) => {
 
 
   // Initialize the storage layer.
-  logger.info('[init] Initializing storage layer');
-  logger.info('[init] storageContext provided:', !!storageContext);
-  logger.info('[init] storageContext type:', typeof storageContext);
-
   const provider = createProvider(storageContext);
-  logger.info('[init] Provider created:', provider.constructor.name);
-
   const database = new Database({ provider });
-  logger.info('[init] Database created');
-
   initDb(database);
-  logger.info('[init] Database initialized in getdb');
 
   // Start the server.
   return createServer(cb);
