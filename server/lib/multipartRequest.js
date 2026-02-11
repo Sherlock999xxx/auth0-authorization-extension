@@ -1,4 +1,4 @@
-import { ArgumentError } from 'auth0-extension-tools';
+import { ArgumentError } from '@a0/auth0-extension-tools';
 
 import { promiseMap } from '../lib/utils';
 

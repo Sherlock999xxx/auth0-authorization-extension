@@ -4,7 +4,7 @@ import {
   PutObjectCommand
 } from '@aws-sdk/client-s3';
 
-import Errors from 'auth0-extension-tools';
+import Errors from "@a0/auth0-extension-tools";
 
 const logger = require('../logger');
 

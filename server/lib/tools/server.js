@@ -2,7 +2,7 @@
 
 const Boom = require('@hapi/boom');
 const request = require('superagent');
-const tools = require('auth0-extension-tools');
+const tools = require("@a0/auth0-extension-tools");
 
 module.exports.createServer = function(cb) {
   return fromHapi(tools.createServer(cb));

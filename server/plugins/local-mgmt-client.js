@@ -1,4 +1,4 @@
-const tools = require('auth0-extension-tools');
+const tools = require("@a0/auth0-extension-tools");
 
 export default function(handlerOptions) {
   if (!handlerOptions || typeof handlerOptions !== 'object') {

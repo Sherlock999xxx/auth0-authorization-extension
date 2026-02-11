@@ -6,7 +6,7 @@ const Boom = require('@hapi/boom');
 const path = require('path');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
-const tools = require('auth0-extension-tools');
+const tools = require("@a0/auth0-extension-tools");
 const jwksRsa = require('jwks-rsa');
 
 const { getBasePath, getBaseUrl } = require('../lib/tools/auth0-extension-hapi-tools-url-helpers');

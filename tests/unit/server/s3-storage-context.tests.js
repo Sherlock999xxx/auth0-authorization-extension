@@ -5,7 +5,7 @@ import { sdkStreamMixin } from '@smithy/util-stream';
 import { Readable } from 'stream';
 
 import { expect } from 'chai';
-import { ArgumentError } from 'auth0-extension-tools';
+import { ArgumentError } from "@a0/auth0-extension-tools";
 
 import { S3StorageContext } from '../../../server/lib/tools/s3-storage-context';
 

@@ -1,5 +1,5 @@
 import request from 'superagent';
-import { managementApi } from 'auth0-extension-tools';
+import { managementApi } from '@a0/auth0-extension-tools';
 import config from './config';
 
 const apiIdentifier = 'urn:auth0-authz-api';

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ArgumentError, ValidationError } from 'auth0-extension-tools';
+import { ArgumentError, ValidationError } from "@a0/auth0-extension-tools";
 import config from '../config';
 
 const checkUnique = (

@@ -1,4 +1,4 @@
-import * as tools from 'auth0-extension-tools';
+import * as tools from "@a0/auth0-extension-tools";
 import Boom from '@hapi/boom';
 
 import config from '../lib/config';
