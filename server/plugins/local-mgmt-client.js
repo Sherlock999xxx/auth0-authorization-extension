@@ -1,12 +1,13 @@
-const tools = require('auth0-extension-tools');
+const { ArgumentError } = require('../lib/errors');
+const managementApi = require('../lib/auth0/managementApi');
 
 export default function(handlerOptions) {
   if (!handlerOptions || typeof handlerOptions !== 'object') {
-    throw new tools.ArgumentError('Must provide the options');
+    throw new ArgumentError('Must provide the options');
   }
 
   if (typeof handlerOptions.domain !== 'string' || handlerOptions.domain.length === 0) {
-    throw new tools.ArgumentError('The provided domain is invalid: ' + handlerOptions.domain);
+    throw new ArgumentError('The provided domain is invalid: ' + handlerOptions.domain);
   }
 
   return {
@@ -17,7 +18,7 @@ export default function(handlerOptions) {
         accessToken: req.auth.credentials.access_token
       };
 
-      const auth0 = await tools.managementApi.getClient(options);
+      const auth0 = await managementApi.getClient(options);
       return auth0;
     },
     assign: 'auth0'

@@ -1,11 +1,13 @@
-import path from 'path';
-import { FileStorageContext, WebtaskStorageContext, BlobRecordProvider } from 'auth0-extension-tools';
-import { S3StorageContext } from '../tools/s3-storage-context';
+const path = require('path');
+const FileStorageContext = require('./contexts/FileStorageContext');
+const WebtaskStorageContext = require('./contexts/WebtaskStorageContext');
+const BlobRecordProvider = require('./contexts/BlobRecordProvider');
+const { S3StorageContext } = require('../tools/s3-storage-context');
 
-import config from '../config';
-import logger from '../logger';
+const config = require('../config');
+const logger = require('../logger');
 
-export function createProvider(storageContext) {
+function createProvider(storageContext) {
   switch (config('STORAGE_TYPE')) {
     case 's3': {
       logger.info('Initializing the S3 Storage Context.');
@@ -26,7 +28,10 @@ export function createProvider(storageContext) {
       const context = storageContext
           ? new WebtaskStorageContext(storageContext, { force: 0 })
           : new FileStorageContext(path.join(__dirname, '../../data.json'), { mergeWrites: true });
+
       return new BlobRecordProvider(context, { concurrentWrites: false });
     }
   }
 }
+
+module.exports = { createProvider };

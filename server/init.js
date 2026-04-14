@@ -35,11 +35,9 @@ export default (cfg, storageContext, cb) => {
 
 
   // Initialize the storage layer.
-  initDb(
-    new Database({
-      provider: createProvider(storageContext)
-    })
-  );
+  const provider = createProvider(storageContext);
+  const database = new Database({ provider });
+  initDb(database);
 
   // Start the server.
   return createServer(cb);

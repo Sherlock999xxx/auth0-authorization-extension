@@ -1,5 +1,13 @@
 import nconf from 'nconf';
+import nock from 'nock';
 import config from '../../server/lib/config';
+
+// Mock fetch to work with nock
+require('./mocks/fetch-mock');
+
+// Disable all network connections except localhost (for test server)
+nock.disableNetConnect();
+nock.enableNetConnect('127.0.0.1');
 
 import { wellKnownEndpoint } from './mocks/tokens';
 import { auth0Client } from './mocks/auth0';

@@ -2,11 +2,19 @@
 
 const Boom = require('@hapi/boom');
 const request = require('superagent');
-const tools = require('auth0-extension-tools');
 
 module.exports.createServer = function(cb) {
-  return fromHapi(tools.createServer(cb));
+  return fromHapi(createServerFactory(cb));
 };
+
+// Create a server factory function
+function createServerFactory(cb) {
+  return (ctx) => {
+    const getConfig = (key) => ctx?.secrets?.[key] ?? null;
+    const storage = ctx?.storage ?? null;
+    return cb(getConfig, storage);
+  };
+}
 
 const SANITIZE_RX = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
 

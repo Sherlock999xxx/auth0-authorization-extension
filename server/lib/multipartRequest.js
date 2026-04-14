@@ -1,22 +1,22 @@
-import { ArgumentError } from 'auth0-extension-tools';
+import { ArgumentError } from "./errors/index.js";
 
-import { promiseMap } from '../lib/utils';
+import { promiseMap } from "../lib/utils";
 
-import apiCall from './apiCall';
+import apiCall from "./apiCall";
 
-export default async function(
+export default async function (
   client,
   entity,
   opts = {},
   perPage = 100,
-  concurrency = 3
+  concurrency = 3,
 ) {
   if (client === null || client === undefined) {
-    throw new ArgumentError('Must provide a auth0 client object.');
+    throw new ArgumentError("Must provide a auth0 client object.");
   }
 
   if (!entity && !client[entity]) {
-    throw new ArgumentError('Must provide a valid entity for auth0 client.');
+    throw new ArgumentError("Must provide a valid entity for auth0 client.");
   }
 
   const getter = client[entity].getAll;
@@ -27,7 +27,7 @@ export default async function(
 
   const getTotals = async () => {
     const response = await apiCall(client[entity], getter, [
-      Object.assign({}, options, { include_totals: true, page: 0 })
+      Object.assign({}, options, { include_totals: true, page: 0 }),
     ]);
 
     total = response.total || 0;
@@ -38,7 +38,10 @@ export default async function(
   };
 
   const getPage = async (page) => {
-    const data = await apiCall(client[entity], getter, [ Object.assign({}, options, { page: page }) ]);
+    const response = await apiCall(client[entity], getter, [
+      Object.assign({}, options, { page: page }),
+    ]);
+    const data = response || [];
     data.forEach((item) => result.push(item));
     return null;
   };

@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ArgumentError, ValidationError } from 'auth0-extension-tools';
+import { ArgumentError, ValidationError } from '../errors/index.js';
 import config from '../config';
 
 const checkUnique = (
@@ -32,10 +32,12 @@ export default class Database {
 
   getStatus() {
     if (!config('STORAGE_TYPE') || config('STORAGE_TYPE') === 'webtask') {
-      return this.provider.storageContext.read().then((data) => ({
-        size: Buffer.byteLength(JSON.stringify(data), 'utf8'),
-        type: 'default'
-      }));
+      return this.provider.storageContext.read().then((data) => {
+        return {
+          size: Buffer.byteLength(JSON.stringify(data), 'utf8'),
+          type: 'default'
+        };
+      });
     }
 
     return Promise.resolve({ size: null, type: config('STORAGE_TYPE') });
